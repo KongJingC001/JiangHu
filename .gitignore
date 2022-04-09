@@ -5,3 +5,5 @@ obj
 *.cbp
 *.depend
 *.layout
+
+*.dat

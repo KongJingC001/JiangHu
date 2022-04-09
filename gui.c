@@ -1719,7 +1719,6 @@ void DealInput(char ch)
         ShowMapDescri();
         break;
     }
-    return;
 }
 
 /*  打印游戏主菜单*/
@@ -1745,7 +1744,6 @@ void ShowMenu()
     printf("7、退出游戏");
     SetPosition(MARGIN_LEFT, GAME_MENU_LINE + 7);
     printf("请输入选择或四方向移动：");
-    return;
 }
 
 /*  游戏界面加载*/
@@ -1845,7 +1843,6 @@ void CreateMonster()
             //循环结束后重置count为0
             count = 0;
             //生成怪物之后通过ID进行排序，冒泡排序
-            /*  虽然一件循环做了多件事，免去了很多麻烦*/
             for(k = 0; k < randCount - 1; k++)
             {
                 for(l = 0; l < randCount - k - 1; l++)
@@ -1943,7 +1940,6 @@ void CreateStore()
                 map[i][j].store.count++;
             }
             //生成装备之后通过ID进行排序，冒泡排序
-            /*  虽然一件循环做了多件事，免去了很多麻烦*/
             for(k = 0; k < randCount - 1; k++)
             {
                 for(l = 0; l < randCount - k - 1; l++)
