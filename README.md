@@ -1,3 +1,1 @@
-### JiangHu
-
-##### C语言依赖
+# C Language Project
