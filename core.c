@@ -11,27 +11,12 @@ void INIT_GAME()
     CreateStore();
 }
 
-/*
 
 //游戏运行核心
 void GameCore()
 {
-    // 设置程序标题*
-    SetTitle("笑傲江湖之精忠报国");
-    // 登录账号
-    Login();
-    // 初始化游戏
-    INIT_GAME();
-    // ***游戏开始***
-    //载入游戏界面
-    ShowGUI();
-}
-
-*/
-
-//游戏运行核心
-void GameCore()
-{
+    /*  判断系统类型*/
+    OperatorSystem();
     /*  设置程序标题*/
     SetTitle("笑傲江湖之精忠报国");
 

@@ -10,6 +10,16 @@
 #include <conio.h>      //无缓冲输入
 #include <process.h>    //多线程
 
+#include <stdio.h>
+
+#ifdef _WIN32
+    #include <windows.h>
+#elif __linux__
+    #include <sys/utsname.h>
+#elif __APPLE__ && __MACH__
+    #include <sys/utsname.h>
+#endif
+
 /*  装备最高等级*/
 #define EQUIP_MAX_LEVEL 9
 /*  统一最大数组长度*/
@@ -171,6 +181,8 @@ typedef struct _Map
 }Map;
 
 /********************************属性函数*************************************/
+/*  判断操作系统类别*/
+void OperatorSystem();
 /*  光标位置设置*/
 void SetPosition(int X, int Y);
 /*  前后景设置
@@ -190,6 +202,10 @@ void DefaultColor();
 void SetTitle(char * title);
 /*  设置游戏窗口大小*/
 void SetGUISize(int height, int width);
+/*  无缓冲输入*/
+chat input(); 
+/*  刷新屏幕*/
+void freshScreen();
 
 /********************************过程函数*************************************/
 /*  登录游戏*/

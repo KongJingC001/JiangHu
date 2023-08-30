@@ -197,19 +197,52 @@ const char * const SKILL_NAME[] =
     "黯然销魂掌", "雷霆半月斩", "金色天际线", "八极崩"
 };
 
+/*  判断操作系统类别*/
+void OperatorSystem()
+{
+    #ifdef _WIN32
+        return;
+    #elif __linux__
+        return;
+    #elif __APPLE__ && __MACH__
+        printf("Operating System: macOS(Don't supported!)\n");
+    #else
+        printf("Operating System: Unknown\n");
+    #endif
+    getchar();
+    exit(0);
+}
+
 /*  光标位置设置*/
 void SetPosition(int X, int Y)
 {
-    HANDLE handle = GetStdHandle(STD_OUTPUT_HANDLE);
-    COORD coord = {X, Y};
-    SetConsoleCursorPosition(handle, coord);
+    #ifdef _WIN32
+        HANDLE handle = GetStdHandle(STD_OUTPUT_HANDLE);
+        COORD coord = {X, Y};
+        SetConsoleCursorPosition(handle, coord);
+    #elif __linux__
+        printf("\033[%d;%dH", X, Y);
+    #elif __APPLE__ && __MACH__
+        return;
+    #else
+        return;
+    #endif
 }
 
 /*  前后景设置*/
 void SetColor(int foreColor, int backColor)
 {
-    HANDLE handle = GetStdHandle(STD_OUTPUT_HANDLE);
-    SetConsoleTextAttribute(handle, foreColor + backColor * 0x10);
+    #ifdef _WIN32
+        HANDLE handle = GetStdHandle(STD_OUTPUT_HANDLE);
+        SetConsoleTextAttribute(handle, foreColor + backColor * 0x10);
+    #elif __linux__
+        printf("\033[1;31m"); // Set text color to red
+        printf("\033[42m");   // Set background color to green
+    #elif __APPLE__ && __MACH__
+        return;
+    #else
+        return;
+    #endif
 }
 
 /*  默认前后景设置*/
@@ -221,7 +254,47 @@ void DefaultColor()
 /*  设置程序标题*/
 void SetTitle(char * title)
 {
-    SetConsoleTitle(title);
+    #ifdef _WIN32
+        SetConsoleTitle(title);
+    #elif __linux__
+        printf("\033]0;%s\007", title);
+   #elif __APPLE__ && __MACH__
+        return;
+    #else
+        return;
+    #endif
+}
+
+/*  无缓冲输入*/
+chat input()
+{
+    #ifdef _WIN32
+        return _getch();
+    #elif __linux__
+        char input[100];
+        setvbuf(stdin, NULL, _IONBF, 0); // Disable buffering for input
+        printf("Enter input: ");
+        fgets(input, sizeof(input), stdin);
+    return 0;
+    #elif __APPLE__ && __MACH__
+        return;
+    #else
+        return;
+    #endif
+}
+
+/*  刷新屏幕*/
+void freshScreen()
+{
+    #ifdef _WIN32
+        system("cls");
+    #elif __linux__
+        printf("\033[2J");  // Clear the entire command line
+    #elif __APPLE__ && __MACH__
+        return;
+    #else
+        return;
+    #endif
 }
 
 //登录游戏的欢迎界面
@@ -269,7 +342,7 @@ int Login_Menu()
         }
         fflush(stdin);
         /*  错误输入就清空*/
-        system("cls");
+        freshScreen();
     }
     while(1);
     return choice;
@@ -285,7 +358,7 @@ void Login()
     //选择菜单
     choice = Login_Menu();
     //清屏，进入登录或注册页面
-    system("cls");
+    freshScreen();
     //打印欢迎菜单
     Login_Welcome();
     switch(choice)
@@ -336,7 +409,7 @@ int LoginAccount()
             printf("%s大侠，请输入您的账号密码：", role.name);
             /*  从键盘录入字符串*/
             do{
-                password[j] = _getch();
+                password[j] = input();
                 /*  按回车键结束输入*/
             }while(password[j++] != 13);
             /*  最后一个回车键改为'\0'*/
@@ -345,7 +418,7 @@ int LoginAccount()
             if(strcmp(password, role.password) == 0)
             {
                 //登录成功，打印欢迎信息
-                system("cls");
+                freshScreen();
                 Login_Welcome();
                 SetPosition(MARGIN_LEFT + 20, LOGIN_MENU_LINE + 1);
                 printf("%s大侠, 欢迎回到江湖！", role.name);
@@ -358,7 +431,7 @@ int LoginAccount()
         printf("账号或密码错误！！！");
         //清屏重新打印
         Sleep(2000);
-        system("cls");
+        freshScreen();
         Login_Welcome();
     }
     return 0;
@@ -433,13 +506,13 @@ School Choice_School()
     do
     {
         //重新打印信息
-        system("cls");
+        freshScreen();
         //打印欢迎界面
         Login_Welcome();
         //通过行列坐标打印门派信息，高亮显示（X，Y）的门派
         id = Show_School(X, Y);
         //无缓冲输入
-        ch = _getch();
+        ch = input();
         //更替坐标值
         switch(ch)
         {
@@ -509,7 +582,7 @@ void SignUp()
     printf("请输入密码：");
     /*  从键盘录入字符串*/
     do{
-        tempString[i] = _getch();
+        tempString[i] = input();
         //按回车键结束输入
     }while(tempString[i++] != 13);
     //最后一个回车键改为'\0'
@@ -770,7 +843,7 @@ void UseEquip()
         SetPosition(MARGIN_LEFT, GAME_MENU_LINE - 2);
         printf("请输入要选择的装备（按0退出）：");
         /*  捕获用户输入，刷新输入流*/
-        input = _getch();
+        input = input();
         fflush(stdin);
         if(input == '0')
         {
@@ -799,7 +872,7 @@ void UseEquip()
         do
         {
             /*  获得用户的进一步选择，转换为大写*/
-            input = toupper(_getch());
+            input = toupper(input());
             /*  刷新输入流*/
             fflush(stdin);
             /*  当用户的选择既不是U也不是L，且不是R就退出*/
@@ -911,7 +984,7 @@ void UseEquip()
         SetPosition(MARGIN_LEFT + 50, INFO_GUI_LINE);
         system("pause");
         /*  重新打印*/
-        system("cls");
+        freshScreen();
         ShowTopic();
         ShowMap(role.coord.X, role.coord.Y);
         ShowMenu();
@@ -1182,7 +1255,7 @@ void BrushStrange()
             continue;
         }
         //当前对战结束后，重新打印怪物信息
-        system("cls");
+        freshScreen();
         ShowTopic();
         ShowMap(role.coord.X, role.coord.Y);
         ShowMenu();
@@ -1200,7 +1273,7 @@ void GoBackSchool()
     role.coord = role.school.coord;
     role.healthPoint = 100;
     //重新打印地图和地图信息，等待下次输入
-    system("cls");
+    freshScreen();
     ShowTopic();
     ShowMap(role.coord.X, role.coord.Y);
     ShowMapDescri();
@@ -1383,7 +1456,7 @@ void BuyEquip()
             continue;
         }
         //交易成功，进行下次交易
-        system("cls");
+        freshScreen();
         ShowTopic();
         ShowMap(role.coord.X, role.coord.Y);
         ShowMenu();
@@ -1468,7 +1541,7 @@ void ExploreMap()
     do
     {
         /*  获取玩家输入，转换为大写字符*/
-        choice = toupper(_getch());
+        choice = toupper(input());
         /*  清空缓冲区*/
         fflush(stdin);
     }
@@ -1756,7 +1829,7 @@ void ShowGUI()
     while(1)
     {
         ///重新打印，清除屏幕
-        system("cls");
+        freshScreen();
         //Part1、打印游戏标题
         ShowTopic();
         //Part2、打印地图
@@ -1766,7 +1839,7 @@ void ShowGUI()
         //Part3、游戏信息界面，通过用户输入获取要打印的信息
         DealInput(ch);
         //无缓冲输入
-        ch = _getch();
+        ch = input();
         //玩家进行移动，更改玩家坐标
         switch(ch)
         {
